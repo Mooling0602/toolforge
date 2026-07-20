@@ -1,7 +1,7 @@
-from toolforge.fc.inject import build_instructions, inject_prompt_messages, render_history_messages
-from toolforge.fc.parse import parse_text_to_calls, to_openai_tool_calls
-from toolforge.models.canonical import Message, ToolCall, ToolDef
-from xyml_toolcall import render_tool_call
+from app.fc.inject import build_instructions, inject_prompt_messages, render_history_messages
+from app.fc.parse import parse_text_to_calls, to_openai_tool_calls
+from app.models.canonical import Message, ToolCall, ToolDef
+from app.engine.xyml import render_tool_call
 
 
 TOOLS = [

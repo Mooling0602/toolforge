@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "toolforge"
-version = "0.3.1"
+version = "0.4.0"
 description = "LLM tool-calling middleware: native FC pass-through or XYML prompt fallback."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -16,27 +16,23 @@ dependencies = [
   "uvicorn[standard]>=0.30.0",
   "httpx>=0.27.0",
   "pyyaml>=6.0",
-  # Install engine first: pip install -e ./vendor/xyml-toolcall
-  "xyml-toolcall>=0.1.0",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "anyio>=4.0"]
 
 [project.scripts]
-toolforge = "toolforge.cli:main"
+toolforge = "app.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/YuJunZhiXue/toolforge"
 Repository = "https://github.com/YuJunZhiXue/toolforge"
 
-[tool.setuptools]
-package-dir = { "" = "src" }
-
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["app*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["."]

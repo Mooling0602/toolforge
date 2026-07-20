@@ -35,7 +35,7 @@ def main(argv: list[str] | None = None) -> None:
 
     # Import app factory so config path is honored via TOOLFORGE_CONFIG
     uvicorn.run(
-        "toolforge.app:app",
+        "app.main:app",
         host=host,
         port=port,
         reload=args.reload,

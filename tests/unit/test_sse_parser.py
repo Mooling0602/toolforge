@@ -1,4 +1,4 @@
-from toolforge.util.sse import SSEParser, format_sse, try_json
+from app.util.sse import SSEParser, format_sse, try_json
 
 
 def test_sse_parser_multiline_data():

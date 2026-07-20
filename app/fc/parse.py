@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, List, Optional, Tuple
 
-from xyml_toolcall import (
+from app.engine.xyml import (
     ProtocolSpec,
     ToolCallConfig,
     ToolSieve,

@@ -1,6 +1,6 @@
-from toolforge.config import FeaturesConfig, UpstreamConfig
-from toolforge.fc.policy import resolve_fc_mode
-from toolforge.models.canonical import CanonicalRequest, Message, ToolDef
+from app.config import FeaturesConfig, UpstreamConfig
+from app.fc.policy import resolve_fc_mode
+from app.models.canonical import CanonicalRequest, Message, ToolDef
 
 
 def _req(with_tools: bool = True) -> CanonicalRequest:

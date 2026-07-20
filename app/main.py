@@ -8,13 +8,13 @@ from typing import Any, Dict, Optional
 from fastapi import Depends, FastAPI, Header, Request
 from fastapi.responses import JSONResponse
 
-from . import __version__
+from app import __version__
 from .auth import require_client_auth
 from .config import AppConfig, default_config_path, load_config
-from .protocols.anthropic import handle_count_tokens, handle_messages
-from .protocols.gemini import handle_generate
-from .protocols.openai_chat import handle_chat_completions
-from .protocols.openai_responses import handle_responses
+from .adapters.anthropic import handle_count_tokens, handle_messages
+from .adapters.gemini import handle_generate
+from .adapters.openai_chat import handle_chat_completions
+from .adapters.openai_responses import handle_responses
 from .upstream.router import UpstreamRouter
 from .util.metrics import GLOBAL_METRICS
 

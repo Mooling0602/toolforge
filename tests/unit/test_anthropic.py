@@ -3,10 +3,10 @@ import json
 import httpx
 import pytest
 from fastapi.testclient import TestClient
-from xyml_toolcall import render_tool_call
+from app.engine.xyml import render_tool_call
 
-from toolforge.app import create_app
-from toolforge.config import AppConfig, ClientAuthConfig, FeaturesConfig, UpstreamConfig
+from app.main import create_app
+from app.config import AppConfig, ClientAuthConfig, FeaturesConfig, UpstreamConfig
 
 
 class _MockTransport(httpx.AsyncBaseTransport):
@@ -65,7 +65,7 @@ def test_anthropic_prompt_fc_messages(monkeypatch):
         kwargs.setdefault("base_url", "http://upstream.test/v1")
         return real(*args, **kwargs)
 
-    monkeypatch.setattr("toolforge.upstream.openai_compat.httpx.AsyncClient", factory)
+    monkeypatch.setattr("app.upstream.openai.httpx.AsyncClient", factory)
 
     with TestClient(app) as client:
         resp = client.post(

@@ -8,16 +8,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1
 
-COPY vendor/xyml-toolcall /app/vendor/xyml-toolcall
-COPY pyproject.toml README.md LICENSE /app/
-COPY src /app/src
-COPY config.example.yaml /app/config.example.yaml
+COPY requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
 
-RUN pip install -e /app/vendor/xyml-toolcall \
-    && pip install -e /app \
-    && cp /app/config.example.yaml /app/config.yaml
+COPY app /app/app
+COPY config.example.yaml /app/config.example.yaml
+COPY pyproject.toml README.md LICENSE /app/
+
+RUN cp /app/config.example.yaml /app/config.yaml
 
 EXPOSE 8080
 
 # Override config by mounting ./config.yaml -> /app/config.yaml
-CMD ["uvicorn", "toolforge.app:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

@@ -3,10 +3,10 @@ import json
 import httpx
 import pytest
 from fastapi.testclient import TestClient
-from xyml_toolcall import render_tool_call
+from app.engine.xyml import render_tool_call
 
-from toolforge.app import create_app
-from toolforge.config import (
+from app.main import create_app
+from app.config import (
     AppConfig,
     ClientAuthConfig,
     FeaturesConfig,
@@ -79,7 +79,7 @@ def prompt_app(monkeypatch):
         kwargs.setdefault("base_url", "http://upstream.test/v1")
         return real_async_client(*args, **kwargs)
 
-    monkeypatch.setattr("toolforge.upstream.openai_compat.httpx.AsyncClient", client_factory)
+    monkeypatch.setattr("app.upstream.openai.httpx.AsyncClient", client_factory)
     return app
 
 
@@ -178,7 +178,7 @@ def test_native_passthrough_keeps_tools(monkeypatch):
         kwargs.setdefault("base_url", "http://upstream.test/v1")
         return real_async_client(*args, **kwargs)
 
-    monkeypatch.setattr("toolforge.upstream.openai_compat.httpx.AsyncClient", client_factory)
+    monkeypatch.setattr("app.upstream.openai.httpx.AsyncClient", client_factory)
 
     with TestClient(app) as client:
         resp = client.post(

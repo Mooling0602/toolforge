@@ -1,7 +1,7 @@
-from toolforge.fc.obfuscation import deobfuscate_calls, obfuscate_tools
-from toolforge.fc.profiles import detect_tool_profile, profile_instruction_block
-from toolforge.fc.recovery import build_retry_user_message, is_tool_call_truncated, parse_with_recovery_hint
-from toolforge.models.canonical import ToolCall, ToolDef
+from app.fc.obfuscation import deobfuscate_calls, obfuscate_tools
+from app.fc.profiles import detect_tool_profile, profile_instruction_block
+from app.fc.recovery import build_retry_user_message, is_tool_call_truncated, parse_with_recovery_hint
+from app.models.canonical import ToolCall, ToolDef
 
 
 def test_detect_claude_code_profile():

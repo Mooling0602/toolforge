@@ -17,5 +17,4 @@ htmlcov/
 .DS_Store
 .idea/
 .vscode/
-vendor/**/build/
-vendor/**/*.egg-info/
+_migrate_layout.py

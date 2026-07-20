@@ -1,6 +1,6 @@
-from toolforge.fc.parse import create_sieve
-from toolforge.models.canonical import ToolDef
-from xyml_toolcall import render_tool_call
+from app.fc.parse import create_sieve
+from app.models.canonical import ToolDef
+from app.engine.xyml import render_tool_call
 
 
 def test_sieve_emits_tool_calls_from_chunks():

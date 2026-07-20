@@ -205,4 +205,4 @@ def default_config_path() -> Path:
     cwd = Path.cwd() / "config.yaml"
     if cwd.is_file():
         return cwd
-    return Path(__file__).resolve().parents[2] / "config.example.yaml"
+    return Path(__file__).resolve().parents[1] / "config.example.yaml"

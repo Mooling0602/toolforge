@@ -481,7 +481,7 @@ def build_responses_response(
     tool_calls: Optional[List[ToolCall]] = None,
     usage: Optional[Dict[str, int]] = None,
 ) -> Dict[str, Any]:
-    from xyml_toolcall import responses_tool_items
+    from app.engine.xyml import responses_tool_items
 
     output: List[Dict[str, Any]] = []
     if content:

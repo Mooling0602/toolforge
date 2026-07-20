@@ -7,7 +7,7 @@ from typing import Dict, Union
 from ..config import AppConfig, UpstreamConfig
 from .anthropic import AnthropicUpstream
 from .gemini import GeminiUpstream
-from .openai_compat import OpenAICompatUpstream
+from .openai import OpenAICompatUpstream
 
 UpstreamClientType = Union[OpenAICompatUpstream, AnthropicUpstream, GeminiUpstream]
 

@@ -16,7 +16,7 @@ from ..convert import (
 from ..fc.inject import inject_prompt_messages, strip_tools_from_openai_body
 from ..fc.parse import parse_text_to_calls, to_openai_tool_calls
 from ..models.canonical import CanonicalRequest, CanonicalResponse, ToolCall, tool_defs_to_openai
-from ..protocols.openai_chat import (
+from ..adapters.openai_chat import (
     _openai_messages_from_canonical,
     build_chat_completion_response,
     extract_text_and_native_calls,
