@@ -8,29 +8,15 @@ from typing import Any, Dict, List, Optional
 from fastapi import HTTPException
 
 from ..config import AppConfig
-from ..fc.inject import inject_prompt_messages, strip_tools_from_openai_body
 from ..fc.parse import to_openai_tool_calls
 from ..models.canonical import (
     CanonicalRequest,
     ToolCall,
     openai_messages_to_canonical,
     openai_tools_to_defs,
-    tool_defs_to_openai,
 )
-from ..stream.openai_sse import stream_native_passthrough, stream_prompt_fc
 from ..upstream.router import UpstreamRouter
 from ..util.ids import completion_id, unix_now
-
-
-__all__ = [
-    "body_to_canonical",
-    "build_upstream_openai_body",
-    "build_chat_completion_response",
-    "extract_text_and_native_calls",
-    "handle_chat_completions",
-    "stream_native_passthrough",
-    "stream_prompt_fc",
-]
 
 
 PASSTHROUGH_BODY_KEYS = {
@@ -91,37 +77,6 @@ def _openai_messages_from_canonical(req: CanonicalRequest) -> List[Dict[str, Any
             item["tool_calls"] = to_openai_tool_calls(msg.tool_calls)
         out.append(item)
     return out
-
-
-def build_upstream_openai_body(
-    req: CanonicalRequest,
-    *,
-    upstream_model: str,
-    protocol: str,
-    convert_developer: bool,
-) -> Dict[str, Any]:
-    body: Dict[str, Any] = {
-        "model": upstream_model,
-        "stream": req.stream,
-    }
-    body.update(req.extra)
-
-    if req.fc_mode == "prompt":
-        body["messages"] = inject_prompt_messages(
-            req.messages,
-            req.tools,
-            protocol=protocol,
-            convert_developer_to_system=convert_developer,
-        )
-        body = strip_tools_from_openai_body(body)
-        return body
-
-    body["messages"] = _openai_messages_from_canonical(req)
-    if req.fc_mode == "native" and req.tools:
-        body["tools"] = tool_defs_to_openai(req.tools)
-        if req.tool_choice is not None:
-            body["tool_choice"] = req.tool_choice
-    return body
 
 
 def build_chat_completion_response(

@@ -13,11 +13,10 @@ RUN pip install -r /app/requirements.txt
 
 COPY app /app/app
 COPY config.example.yaml /app/config.example.yaml
-COPY pyproject.toml README.md LICENSE /app/
+COPY README.md LICENSE /app/
 
 RUN cp /app/config.example.yaml /app/config.yaml
 
 EXPOSE 8080
 
-# Override config by mounting ./config.yaml -> /app/config.yaml
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

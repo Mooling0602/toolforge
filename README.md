@@ -21,13 +21,11 @@ Client (OpenAI / Anthropic / Gemini SDK)
 
 ---
 
-## Docker 部署
+## Docker
 
 ```bash
 git clone https://github.com/YuJunZhiXue/toolforge.git
 cd toolforge
-
-# 默认挂载 config.example.yaml
 docker compose up -d --build
 curl http://127.0.0.1:8080/healthz
 ```
@@ -36,26 +34,22 @@ curl http://127.0.0.1:8080/healthz
 
 ```bash
 cp config.example.yaml config.yaml
-# 编辑 base_url / api_key / native_fc / allowed_keys
 HOST_CONFIG=./config.yaml docker compose up -d --build
 ```
 
-改端口：`HOST_PORT=9000 docker compose up -d`  
-宿主机上游示例：`base_url: "http://host.docker.internal:7860/v1"`
+改端口：`HOST_PORT=9000`  
+宿主机上游：`base_url: "http://host.docker.internal:7860/v1"`
 
 ---
 
-## 本地运行
+## 本地
 
 ```bash
 python -m venv .venv
 # Windows: .venv\Scripts\activate
-# Linux/macOS: source .venv/bin/activate
-
 pip install -r requirements.txt
 cp config.example.yaml config.yaml
 uvicorn app.main:app --host 0.0.0.0 --port 8080
-# 或: python -m app.cli serve -c config.yaml
 ```
 
 ---
@@ -70,32 +64,30 @@ client = OpenAI(
     api_key="sk-toolforge-demo",  # = config allowed_keys
 )
 
-tools = [{
-    "type": "function",
-    "function": {
-        "name": "get_weather",
-        "description": "按城市查天气",
-        "parameters": {
-            "type": "object",
-            "properties": {"city": {"type": "string"}},
-            "required": ["city"],
-        },
-    },
-}]
-
 r = client.chat.completions.create(
     model="your-model",
     messages=[{"role": "user", "content": "东京天气？"}],
-    tools=tools,
+    tools=[{
+        "type": "function",
+        "function": {
+            "name": "get_weather",
+            "description": "按城市查天气",
+            "parameters": {
+                "type": "object",
+                "properties": {"city": {"type": "string"}},
+                "required": ["city"],
+            },
+        },
+    }],
 )
 print(r.choices[0].message.tool_calls)
 ```
 
-单请求强制提示词路径：Header `X-ToolForge-FC-Mode: force_prompt`
+强制提示词路径：Header `X-ToolForge-FC-Mode: force_prompt`
 
 ---
 
-## 配置要点
+## 配置
 
 | 字段 | 说明 |
 |------|------|
@@ -113,7 +105,6 @@ print(r.choices[0].message.tool_calls)
 | 方法 | 路径 |
 |------|------|
 | GET | `/healthz` |
-| GET | `/metrics` |
 | GET | `/v1/models` |
 | POST | `/v1/chat/completions` |
 | POST | `/v1/responses` |
@@ -127,18 +118,19 @@ print(r.choices[0].message.tool_calls)
 
 ```text
 toolforge/
-├── app/
+├── app/                  # 中间件代码
 │   ├── main.py           # 入口
 │   ├── config.py / auth.py
-│   ├── engine/           # XYML 引擎 + 编排
-│   ├── adapters/         # OpenAI / Anthropic / Gemini / Responses
+│   ├── engine/           # XYML + 编排
+│   ├── adapters/         # 客户端协议
 │   ├── upstream/         # 上游 HTTP
-│   ├── stream/           # SSE
-│   └── pipeline.py
+│   └── stream/           # SSE
 ├── config.example.yaml
 ├── requirements.txt
 ├── Dockerfile
-└── docker-compose.yml
+├── docker-compose.yml
+├── README.md
+└── LICENSE
 ```
 
-License: MIT
+MIT
