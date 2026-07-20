@@ -1,0 +1,14 @@
+services:
+  toolforge:
+    build: .
+    container_name: toolforge
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      TOOLFORGE_CONFIG: /app/config.yaml
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      LOCAL_API_KEY: ${LOCAL_API_KEY:-sk-local}
+      XAI_API_KEY: ${XAI_API_KEY:-}
+    restart: unless-stopped
