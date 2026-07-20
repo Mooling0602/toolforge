@@ -18,3 +18,8 @@ htmlcov/
 .idea/
 .vscode/
 _migrate_layout.py
+
+# 本地用，不上传仓库
+docs/
+tests/
+examples/

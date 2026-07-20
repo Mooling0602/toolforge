@@ -130,25 +130,15 @@ toolforge/
 ├── app/
 │   ├── main.py           # 入口
 │   ├── config.py / auth.py
-│   ├── engine/           # XYML 引擎 + 编排（内联，无 vendor）
+│   ├── engine/           # XYML 引擎 + 编排
 │   ├── adapters/         # OpenAI / Anthropic / Gemini / Responses
 │   ├── upstream/         # 上游 HTTP
 │   ├── stream/           # SSE
 │   └── pipeline.py
 ├── config.example.yaml
 ├── requirements.txt
-├── Dockerfile / docker-compose.yml
-├── tests/                # 开发回归
-└── examples/e2e_live.py
-```
-
----
-
-## 开发
-
-```bash
-pip install -r requirements.txt pytest
-pytest -q
+├── Dockerfile
+└── docker-compose.yml
 ```
 
 License: MIT
