@@ -8,7 +8,6 @@ build/
 venv/
 .env
 config.yaml
-config.local.yaml
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -18,5 +17,5 @@ htmlcov/
 .DS_Store
 .idea/
 .vscode/
-vendor/xyml-toolcall/build/
-vendor/xyml-toolcall/*.egg-info/
+vendor/**/build/
+vendor/**/*.egg-info/

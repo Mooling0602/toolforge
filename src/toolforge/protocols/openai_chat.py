@@ -21,6 +21,7 @@ from ..stream.openai_sse import stream_native_passthrough, stream_prompt_fc
 from ..upstream.router import UpstreamRouter
 from ..util.ids import completion_id, unix_now
 
+
 __all__ = [
     "body_to_canonical",
     "build_upstream_openai_body",

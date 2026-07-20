@@ -3,4 +3,9 @@ from .gemini import GeminiUpstream
 from .openai_compat import OpenAICompatUpstream
 from .router import UpstreamRouter
 
-__all__ = ["OpenAICompatUpstream", "AnthropicUpstream", "GeminiUpstream", "UpstreamRouter"]
+__all__ = [
+    "OpenAICompatUpstream",
+    "AnthropicUpstream",
+    "GeminiUpstream",
+    "UpstreamRouter",
+]

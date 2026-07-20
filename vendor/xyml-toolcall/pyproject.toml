@@ -5,43 +5,26 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "xyml-toolcall"
 version = "0.1.0"
-description = "Configurable XYML tool-call protocol SDK for Python LLM clients."
-readme = "README.md"
+description = "XYML tool-call protocol engine (parse/render/sieve) for ToolForge."
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
-authors = [
-  { name = "xyml-toolcall contributors" }
-]
-keywords = ["xyml", "tool-calls", "function-calling", "llm", "openai", "anthropic"]
+authors = [{ name = "ToolForge contributors" }]
+keywords = ["xyml", "tool-calls", "function-calling", "llm"]
 classifiers = [
-  "Development Status :: 3 - Alpha",
-  "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13",
-  "Topic :: Software Development :: Libraries"
 ]
 
 [project.urls]
-Homepage = "https://github.com/YuJunZhiXue/qwen2API"
-Repository = "https://github.com/YuJunZhiXue/qwen2API"
-Issues = "https://github.com/YuJunZhiXue/qwen2API/issues"
+Homepage = "https://github.com/YuJunZhiXue/toolforge"
+Repository = "https://github.com/YuJunZhiXue/toolforge"
 
 [tool.setuptools]
 package-dir = { "" = "src" }
-include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
 xyml_toolcall = ["py.typed"]
-
-[tool.unittest]
-start-directory = "tests"
