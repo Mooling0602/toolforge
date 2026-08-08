@@ -700,6 +700,10 @@ class ToolSieve:
             consumed = self._consume_capture(force=True)
             if consumed:
                 events.extend(consumed)
+            elif _has_open_protocol_block(self.capture, self.config):
+                # 捕获的是工具调用结构但解析失败：丢弃，避免原始 XYML 标签透传
+                # （stream_prompt_fc 有 parse_text_to_calls 兜底，不会丢真实调用）
+                pass
             else:
                 events.append({"type": "content", "text": self.capture})
             self.capture = ""
@@ -815,8 +819,8 @@ def _expand_short_close_tags(text: str, protocol: ProtocolSpec) -> str:
     proto = re.escape(protocol.name)
     # 匹配所有协议开/闭标签；捕获组：1=闭合时的标签名（可能 None=简写），2=开放标签整体
     combined = re.compile(
-        r"<\s*/\s*[|:]\s*{}\s*(?:(?:[|:]\s*)?([A-Za-z0-9_]+)\s*)?>"
-        r"|<\s*[|:]\s*{}\s*(?:[|:]\s*)?([A-Za-z0-9_]+)\b[^>]*>".format(
+        r"<\s*/\s*(?:[|:]\s*)*(?:{}\s*)?(?:\s*[|:]\s*)*([A-Za-z0-9_]+)\s*?>"
+        r"|<\s*(?:[|:]\s*)*(?:{}\s*)?(?:\s*[|:]\s*)*([A-Za-z0-9_]+)\b[^>]*>".format(
             proto, proto
         ),
         re.IGNORECASE,
@@ -922,7 +926,7 @@ def _parse_loose_protocol_calls(
         for field_raw, _, field_is_tool, field_position in attributes[index + 1 :]:
             if field_position >= next_tool or field_is_tool:
                 break
-            cdata = re.search(r"<!\[CDATA\[([\s\S]*?)\]\]>", text[field_position:next_tool], re.IGNORECASE)
+            cdata = re.search(r"<\s*(?:[|:])*\s*!\[CDATA\[([\s\S]*?)\]\]>", text[field_position:next_tool], re.IGNORECASE)
             if cdata:
                 input[field_raw] = _decode_markup_value(cdata.group(1), field_raw, config)
         filtered = _filter_input_for_tool(name, input, tools)
@@ -1405,11 +1409,12 @@ def _normalize_protocol_spec(value: Union[str, ProtocolSpec, Mapping[str, Any]])
 
 
 def _protocol_open_tag_re(protocol: ProtocolSpec, tag: str) -> re.Pattern[str]:
-    # 兼容多种分隔符：<|XYML|tag>, <|XYML tag>, <:XYML:tag>（部分客户端/SDK 输出）
+    # 兼容多种分隔符：<|XYML|tag>, <|XYML tag>, <:XYML:tag>, <||DSML||tag>
+    # 兼容无协议名：<|tool_calls>, <|invoke>（模型常省略协议名）
+    name_part = r"(?:{}\s*)?".format(re.escape(protocol.name))
     return re.compile(
-        r"<\s*[|:]\s*{}\s*(?:[|:]\s*)?{}\b[^>]*>".format(
-            re.escape(protocol.name), re.escape(tag)
-        ),
+        r"<\s*(?:[|:]\s*)*{}".format(name_part)
+        + r"(?:\s*[|:]\s*)*{}\b[^>]*>".format(re.escape(tag)),
         re.IGNORECASE,
     )
 
@@ -1418,14 +1423,13 @@ def _protocol_tag_block_re(protocol: ProtocolSpec, tag: str) -> re.Pattern[str]:
     escaped_protocol = re.escape(protocol.name)
     escaped_tag = re.escape(tag)
     # 兼容多种分隔符：<|XYML|tag>...</|XYML|tag>, <|XYML tag>...</|XYML tag>, <:XYML:tag>...</:XYML:tag>
-    # 兼容简写闭合：</|XYML> 或 </:XYML>（省略标签名，部分模型输出）
+    # 兼容分隔符重复（<||DSML||tag>）、无协议名（<|tool_calls>）和简写闭合（</|XYML>）
+    open_name = r"(?:{}\s*)?".format(escaped_protocol)
+    close_name = r"(?:{}\s*)?".format(escaped_protocol)
     return re.compile(
-        r"<\s*[|:]\s*{}\s*(?:[|:]\s*)?{}\b([^>]*)>([\s\S]*?)<\s*/\s*[|:]\s*{}\s*(?:(?:[|:]\s*)?{}\s*)?>".format(
-            escaped_protocol,
-            escaped_tag,
-            escaped_protocol,
-            escaped_tag,
-        ),
+        r"<\s*(?:[|:]\s*)*{}".format(open_name)
+        + r"(?:\s*[|:]\s*)*{}\b([^>]*)>([\s\S]*?)<\s*/\s*(?:[|:]\s*)*{}".format(escaped_tag, close_name)
+        + r"(?:\s*[|:]\s*)*{}\s*>".format(escaped_tag),
         re.IGNORECASE,
     )
 
@@ -1442,7 +1446,8 @@ def _extract_name_attr(attributes: Any) -> str:
 
 
 def _decode_markup_value(raw: Any, parameter_name: Any, config: ToolCallConfig) -> Any:
-    cdata_matches = re.findall(r"<!\[CDATA\[([\s\S]*?)\]\]>", str(raw or ""), re.IGNORECASE)
+    # 兼容 CDATA 变体：<!\[CDATA[ 或 <|[|:]*![CDATA[（模型可能在 ! 前加协议分隔符）
+    cdata_matches = re.findall(r"<\s*(?:[|:])*\s*!\[CDATA\[([\s\S]*?)\]\]>", str(raw or ""), re.IGNORECASE)
     raw_string = str(parameter_name or "").lower() in config.raw_string_params
     if cdata_matches:
         joined = "".join(cdata_matches)
@@ -1528,7 +1533,7 @@ def _looks_structurally_closed(text: str, config: ToolCallConfig) -> bool:
     if re.search(r"\n\s*[\]}]\s*$", text):
         return True
     for protocol in config.parse_protocols:
-        expression = r"<\s*/\s*[|:]\s*{}\s*(?:[|:]\s*)?{}\s*>".format(
+        expression = r"<\s*/\s*(?:[|:]\s*)*(?:{}\s*)?(?:\s*[|:]\s*)*{}\s*>".format(
             re.escape(protocol.name), re.escape(protocol.tags["root"])
         )
         if re.search(expression, text, re.IGNORECASE):
