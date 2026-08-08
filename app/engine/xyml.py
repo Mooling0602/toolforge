@@ -819,7 +819,7 @@ def _expand_short_close_tags(text: str, protocol: ProtocolSpec) -> str:
     proto = re.escape(protocol.name)
     # 匹配所有协议开/闭标签；捕获组：1=闭合时的标签名（可能 None=简写），2=开放标签整体
     combined = re.compile(
-        r"<\s*/\s*(?:[|:]\s*)*(?:{}\s*)?(?:\s*[|:]\s*)*([A-Za-z0-9_]+)\s*?>"
+        r"<\s*/\s*(?:[|:]\s*)*(?:{}\s*)?(?:\s*[|:]\s*)*([A-Za-z0-9_]+)?\s*?>"
         r"|<\s*(?:[|:]\s*)*(?:{}\s*)?(?:\s*[|:]\s*)*([A-Za-z0-9_]+)\b[^>]*>".format(
             proto, proto
         ),
