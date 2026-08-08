@@ -117,16 +117,7 @@ async def stream_prompt_fc(
                     chunk_id=chunk_id,
                 )
             )
-        yield format_sse(
-            _chunk(
-                model=model,
-                delta={},
-                finish_reason="tool_calls",
-                chunk_id=chunk_id,
-                usage=upstream_usage or None,
-            )
-        )
-        yield done_frame()
+        # 不发 finish/DONE：由主循环统一收尾（以便捕获上游 usage 帧）
 
     def _raw_to_calls(calls_raw: List[Any]) -> List[ToolCall]:
         calls: List[ToolCall] = []
@@ -171,9 +162,14 @@ async def stream_prompt_fc(
                         )
                 elif sev.get("type") == "tool_calls":
                     calls = _raw_to_calls(sev.get("calls") or [])
-                    async for frame in _emit_calls(calls):
-                        yield frame
-                    return
+                    if calls:
+                        async for frame in _emit_calls(calls):
+                            yield frame
+                        # 不立即 return：继续消费上游流以捕获后续 usage 帧
+                elif sev.get("type") == "content":
+                    pass
+            if emitted_calls:
+                continue
 
         for sev in sieve.flush():
             if sev.get("type") == "content":
@@ -182,9 +178,10 @@ async def stream_prompt_fc(
                     yield format_sse(_chunk(model=model, delta={"content": text}, chunk_id=chunk_id))
             elif sev.get("type") == "tool_calls" and not emitted_calls:
                 calls = _raw_to_calls(sev.get("calls") or [])
-                async for frame in _emit_calls(calls):
-                    yield frame
-                return
+                if calls:
+                    async for frame in _emit_calls(calls):
+                        yield frame
+                    # 不 return：继续消费以捕获 usage 帧
 
         if not emitted_calls:
             full_text = "".join(full_text_parts)
@@ -194,7 +191,19 @@ async def stream_prompt_fc(
             if calls:
                 async for frame in _emit_calls(calls):
                     yield frame
-                return
+
+        # 统一收尾：finish_reason + usage + [DONE]
+        if emitted_calls:
+            yield format_sse(
+                _chunk(
+                    model=model,
+                    delta={},
+                    finish_reason="tool_calls",
+                    chunk_id=chunk_id,
+                    usage=upstream_usage or None,
+                )
+            )
+        else:
             yield format_sse(
                 _chunk(
                     model=model,
