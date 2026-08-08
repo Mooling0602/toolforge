@@ -1358,8 +1358,9 @@ def _normalize_protocol_spec(value: Union[str, ProtocolSpec, Mapping[str, Any]])
 
 
 def _protocol_open_tag_re(protocol: ProtocolSpec, tag: str) -> re.Pattern[str]:
+    # 兼容两种分隔符：<|XYML|tag>（标准）和 <|XYML tag>（空格变体，部分模型输出）
     return re.compile(
-        r"<\s*\|\s*{}\s*\|\s*{}\b[^>]*>".format(
+        r"<\s*\|\s*{}\s*(?:\|\s*)?{}\b[^>]*>".format(
             re.escape(protocol.name), re.escape(tag)
         ),
         re.IGNORECASE,
@@ -1369,8 +1370,9 @@ def _protocol_open_tag_re(protocol: ProtocolSpec, tag: str) -> re.Pattern[str]:
 def _protocol_tag_block_re(protocol: ProtocolSpec, tag: str) -> re.Pattern[str]:
     escaped_protocol = re.escape(protocol.name)
     escaped_tag = re.escape(tag)
+    # 兼容两种分隔符：<|XYML|tag>...</|XYML|tag>（标准）和 <|XYML tag>...</|XYML tag>（空格变体）
     return re.compile(
-        r"<\s*\|\s*{}\s*\|\s*{}\b([^>]*)>([\s\S]*?)<\s*/\s*\|\s*{}\s*\|\s*{}\s*>".format(
+        r"<\s*\|\s*{}\s*(?:\|\s*)?{}\b([^>]*)>([\s\S]*?)<\s*/\s*\|\s*{}\s*(?:\|\s*)?{}\s*>".format(
             escaped_protocol,
             escaped_tag,
             escaped_protocol,
@@ -1478,7 +1480,7 @@ def _looks_structurally_closed(text: str, config: ToolCallConfig) -> bool:
     if re.search(r"\n\s*[\]}]\s*$", text):
         return True
     for protocol in config.parse_protocols:
-        expression = r"<\s*/\s*\|\s*{}\s*\|\s*{}\s*>".format(
+        expression = r"<\s*/\s*\|\s*{}\s*(?:\|\s*)?{}\s*>".format(
             re.escape(protocol.name), re.escape(protocol.tags["root"])
         )
         if re.search(expression, text, re.IGNORECASE):
