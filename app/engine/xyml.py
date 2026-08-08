@@ -700,10 +700,6 @@ class ToolSieve:
             consumed = self._consume_capture(force=True)
             if consumed:
                 events.extend(consumed)
-            elif _has_open_protocol_block(self.capture, self.config):
-                # 捕获的是工具调用结构但解析失败：丢弃，避免原始 XYML 标签透传
-                # （stream_prompt_fc 有 parse_text_to_calls 兜底，不会丢真实调用）
-                pass
             else:
                 events.append({"type": "content", "text": self.capture})
             self.capture = ""
