@@ -17,8 +17,9 @@ def _chunk(
     delta: Dict[str, Any],
     finish_reason: Optional[str] = None,
     chunk_id: Optional[str] = None,
+    usage: Optional[Dict[str, int]] = None,
 ) -> Dict[str, Any]:
-    return {
+    result = {
         "id": chunk_id or completion_id(),
         "object": "chat.completion.chunk",
         "created": unix_now(),
@@ -32,6 +33,9 @@ def _chunk(
             }
         ],
     }
+    if usage:
+        result["usage"] = usage
+    return result
 
 
 async def stream_native_passthrough(
@@ -85,6 +89,7 @@ async def stream_prompt_fc(
 
     full_text_parts: List[str] = []
     emitted_calls = False
+    upstream_usage: Dict[str, int] = {}
 
     async def _emit_calls(calls: List[ToolCall]) -> AsyncIterator[str]:
         nonlocal emitted_calls
@@ -113,7 +118,13 @@ async def stream_prompt_fc(
                 )
             )
         yield format_sse(
-            _chunk(model=model, delta={}, finish_reason="tool_calls", chunk_id=chunk_id)
+            _chunk(
+                model=model,
+                delta={},
+                finish_reason="tool_calls",
+                chunk_id=chunk_id,
+                usage=upstream_usage or None,
+            )
         )
         yield done_frame()
 
@@ -137,6 +148,9 @@ async def stream_prompt_fc(
             payload = event.json()
             if not payload:
                 continue
+            # Capture usage from upstream
+            if isinstance(payload.get("usage"), dict):
+                upstream_usage = payload["usage"]
             choices = payload.get("choices") or []
             if not choices:
                 continue
@@ -181,7 +195,15 @@ async def stream_prompt_fc(
                 async for frame in _emit_calls(calls):
                     yield frame
                 return
-            yield format_sse(_chunk(model=model, delta={}, finish_reason="stop", chunk_id=chunk_id))
+            yield format_sse(
+                _chunk(
+                    model=model,
+                    delta={},
+                    finish_reason="stop",
+                    chunk_id=chunk_id,
+                    usage=upstream_usage or None,
+                )
+            )
         yield done_frame()
     except Exception as exc:  # noqa: BLE001
         yield format_sse(
@@ -190,6 +212,7 @@ async def stream_prompt_fc(
                 delta={"content": f"\n[stream error: {exc}]"},
                 finish_reason="stop",
                 chunk_id=chunk_id,
+                usage=upstream_usage or None,
             )
         )
         yield done_frame()
