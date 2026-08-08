@@ -802,6 +802,52 @@ class ToolRuntime:
         return results
 
 
+def _expand_short_close_tags(text: str, protocol: ProtocolSpec) -> str:
+    """Expand shorthand closing tags like </|XYML> to their full form.
+
+    Some models emit `</|XYML>` (omitting the tag name) to close the most
+    recently opened XYML block. This pass walks the markup linearly and
+    rewrites those short closers to e.g. `</|XYML|parameter>` based on the
+    last opened tag.
+    """
+    if not text or "</" not in text:
+        return text
+    proto = re.escape(protocol.name)
+    # 匹配所有协议开/闭标签；捕获组：1=闭合时的标签名（可能 None=简写），2=开放标签整体
+    combined = re.compile(
+        r"<\s*/\s*[|:]\s*{}\s*(?:(?:[|:]\s*)?([A-Za-z0-9_]+)\s*)?>"
+        r"|<\s*[|:]\s*{}\s*(?:[|:]\s*)?([A-Za-z0-9_]+)\b[^>]*>".format(
+            proto, proto
+        ),
+        re.IGNORECASE,
+    )
+    stack: List[str] = []
+    out: List[str] = []
+    pos = 0
+    for m in combined.finditer(text):
+        out.append(text[pos : m.start()])
+        token = m.group(0)
+        closing = token.lstrip().startswith("</")
+        if closing:
+            tag_name = m.group(1)
+            if tag_name is None and stack:
+                # 简写闭合：用最近打开的标签名补全
+                tag_name = stack.pop()
+                out.append("</|{}|{}>".format(protocol.name, tag_name))
+            else:
+                if tag_name is not None and stack and stack[-1] == tag_name:
+                    stack.pop()
+                out.append(token)
+        else:
+            tag_name = m.group(2)
+            if tag_name:
+                stack.append(tag_name)
+            out.append(token)
+        pos = m.end()
+    out.append(text[pos:])
+    return "".join(out)
+
+
 def _parse_protocol_markup(
     text: Any,
     protocol: ProtocolSpec,
@@ -810,6 +856,7 @@ def _parse_protocol_markup(
     config: ToolCallConfig,
 ) -> List[ParsedToolCall]:
     canonical = _canonicalize_markup(_strip_markdown_fences(str(text or "")))
+    canonical = _expand_short_close_tags(canonical, protocol)
     calls: List[ParsedToolCall] = []
     for candidate in _extract_protocol_candidates(canonical, protocol):
         for match in _protocol_tag_block_re(protocol, protocol.tags["invoke"]).finditer(candidate):
@@ -1371,8 +1418,9 @@ def _protocol_tag_block_re(protocol: ProtocolSpec, tag: str) -> re.Pattern[str]:
     escaped_protocol = re.escape(protocol.name)
     escaped_tag = re.escape(tag)
     # 兼容多种分隔符：<|XYML|tag>...</|XYML|tag>, <|XYML tag>...</|XYML tag>, <:XYML:tag>...</:XYML:tag>
+    # 兼容简写闭合：</|XYML> 或 </:XYML>（省略标签名，部分模型输出）
     return re.compile(
-        r"<\s*[|:]\s*{}\s*(?:[|:]\s*)?{}\b([^>]*)>([\s\S]*?)<\s*/\s*[|:]\s*{}\s*(?:[|:]\s*)?{}\s*>".format(
+        r"<\s*[|:]\s*{}\s*(?:[|:]\s*)?{}\b([^>]*)>([\s\S]*?)<\s*/\s*[|:]\s*{}\s*(?:(?:[|:]\s*)?{}\s*)?>".format(
             escaped_protocol,
             escaped_tag,
             escaped_protocol,
