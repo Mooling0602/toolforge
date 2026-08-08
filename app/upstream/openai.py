@@ -37,6 +37,9 @@ class OpenAICompatUpstream:
     ) -> Union[Dict[str, Any], AsyncIterator[str]]:
         payload = dict(body)
         payload["stream"] = bool(stream)
+        # 请求流式 usage 回传（OpenAI 规范：stream_options.include_usage）
+        if stream:
+            payload.setdefault("stream_options", {}).setdefault("include_usage", True)
         url = "/chat/completions"
         # base_url may already include /v1
         if stream:
