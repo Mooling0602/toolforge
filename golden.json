@@ -1,0 +1,465 @@
+{
+ "parse:xyml_simple": [
+  {
+   "id": "call_urydq05xs51p",
+   "name": "get_weather",
+   "input": {
+    "city": "Tokyo"
+   }
+  }
+ ],
+ "parse:xyml_bool_null": [
+  {
+   "id": "call_mrkko3bb44dn",
+   "name": "get_weather",
+   "input": {
+    "city": "Tokyo",
+    "unit": "metric"
+   }
+  }
+ ],
+ "parse:xyml_array": [
+  {
+   "id": "call_h5eoobul58vb",
+   "name": "send_email",
+   "input": {
+    "to": "a@b.com",
+    "subject": "hi",
+    "body": "hello world",
+    "attachments": [
+     "a.pdf",
+     "b.pdf"
+    ]
+   }
+  }
+ ],
+ "parse:xyml_short_close": [
+  {
+   "id": "call_fg138424g3pq",
+   "name": "get_weather",
+   "input": {
+    "city": "Tokyo"
+   }
+  }
+ ],
+ "parse:xyml_no_protocol_name": [
+  {
+   "id": "call_3sv0wpx6y7ci",
+   "name": "get_weather",
+   "input": {
+    "city": "Tokyo"
+   }
+  }
+ ],
+ "parse:xyml_markdown_fence": [
+  {
+   "id": "call_4zoba3okouye",
+   "name": "get_weather",
+   "input": {
+    "city": "Shanghai"
+   }
+  }
+ ],
+ "parse:xyml_fullwidth": [
+  {
+   "id": "call_cgfa9ffy9sk9",
+   "name": "get_weather",
+   "input": {
+    "city": "Tokyo"
+   }
+  }
+ ],
+ "parse:qnml_simple": [
+  {
+   "id": "call_ef1c7o1vyzit",
+   "name": "get_weather",
+   "input": {
+    "city": "Paris"
+   }
+  }
+ ],
+ "parse:xml_tool_call": [
+  {
+   "id": "call_6joa2bafmumw",
+   "name": "get_weather",
+   "input": {
+    "city": "NYC"
+   }
+  }
+ ],
+ "parse:xml_tool_use": [
+  {
+   "id": "call_otiz98hrj4z7",
+   "name": "get_weather",
+   "input": {
+    "city": "Berlin"
+   }
+  }
+ ],
+ "parse:xml_function_json": [
+  {
+   "id": "call_lx6brkdc89j3",
+   "name": "send_email",
+   "input": {
+    "to": "x@y.z",
+    "subject": "s",
+    "body": "b"
+   }
+  }
+ ],
+ "parse:json_tool_calls": [
+  {
+   "id": "call_1",
+   "name": "get_weather",
+   "input": {
+    "city": "London"
+   }
+  }
+ ],
+ "parse:json_loose": [
+  {
+   "id": "call_ls4jz9l0jhd2",
+   "name": "get_weather",
+   "input": {
+    "city": "Rome"
+   }
+  }
+ ],
+ "parse:json_repair": [],
+ "parse:json_array_wrap": [
+  {
+   "id": "call_mx91qw8ekb6l",
+   "name": "get_weather",
+   "input": {
+    "city": "Oslo"
+   }
+  }
+ ],
+ "parse:text_kv": [
+  {
+   "id": "call_2xxsrvwiq6y2",
+   "name": "get_weather",
+   "input": {
+    "city": "Tokyo"
+   }
+  }
+ ],
+ "parse:nested_xml_items": [],
+ "parse:nested_xml_obj": [],
+ "parse:raw_string_param": [],
+ "parse:plain_text_no_call": [],
+ "parse:plain_text_suspicious": [],
+ "parse:coerce_array_string": [],
+ "parse:exec_aliases": [
+  {
+   "id": "call_188zk9do5134",
+   "name": "Bash",
+   "input": {
+    "command": "ls -la"
+   }
+  }
+ ],
+ "parse:exec_safe_alias_short": [
+  {
+   "id": "call_aju7rulj73m0",
+   "name": "Read",
+   "input": {
+    "file_path": "/etc/hosts"
+   }
+  }
+ ],
+ "parse:unknown_tool_drop": [],
+ "parse:missing_required_drop": [],
+ "parse:dedupe": [
+  {
+   "id": "call_m8y2rvayp4so",
+   "name": "get_weather",
+   "input": {
+    "city": "a"
+   }
+  },
+  {
+   "id": "call_p1b1cc2a8ceq",
+   "name": "get_weather",
+   "input": {
+    "city": "b"
+   }
+  }
+ ],
+ "parse:multi_tools": [
+  {
+   "id": "call_f83ep4ub8buv",
+   "name": "get_weather",
+   "input": {
+    "city": "a"
+   }
+  },
+  {
+   "id": "call_byoigscnwh56",
+   "name": "send_email",
+   "input": {
+    "to": "e@e.e",
+    "subject": "s",
+    "body": "b"
+   }
+  }
+ ],
+ "parse:polluted_path": [],
+ "parse:unclosed_block": [],
+ "parse:plain_json_inside_text": [],
+ "render:render_simple": "<|XYML|tool_calls>\n  <|XYML|invoke name=\"get_weather\">\n    <|XYML|parameter name=\"city\"><![CDATA[Tokyo]]></|XYML|parameter>\n    <|XYML|parameter name=\"unit\"><![CDATA[metric]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>",
+ "render:render_string_cdata": "<|XYML|tool_calls>\n  <|XYML|invoke name=\"send_email\">\n    <|XYML|parameter name=\"body\"><![CDATA[line1\nline2]]></|XYML|parameter>\n    <|XYML|parameter name=\"subject\"><![CDATA[hi]]></|XYML|parameter>\n    <|XYML|parameter name=\"to\"><![CDATA[a@b.com]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>",
+ "render:render_array": "<|XYML|tool_calls>\n  <|XYML|invoke name=\"send_email\">\n    <|XYML|parameter name=\"attachments\">[\"a.pdf\",\"b.pdf\"]</|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>",
+ "render:render_nested": "<|XYML|tool_calls>\n  <|XYML|invoke name=\"get_weather\">\n    <|XYML|parameter name=\"meta\">{\"lat\":35,\"lon\":139}</|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>",
+ "render:render_bool_null": "<|XYML|tool_calls>\n  <|XYML|invoke name=\"get_weather\">\n    <|XYML|parameter name=\"debug\">true</|XYML|parameter>\n    <|XYML|parameter name=\"limit\">null</|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>",
+ "coerce:coerce_read_path_alias": {
+  "file_path": "/etc/hosts"
+ },
+ "coerce:coerce_write_content_alias": {
+  "file_path": "/tmp/f",
+  "content": "hi"
+ },
+ "coerce:coerce_bash_cmd_alias": {
+  "command": "ls"
+ },
+ "sieve:sieve_text_only": [
+  {
+   "type": "content",
+   "text": "今天",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "天气很好，我希",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "望你能告诉我东",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "京的天气。这是",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "一段很长的文本",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "今天天气很好，",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "我希望你能告诉",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "我东京的天气。",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "这是一段很长的",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "文本今天天气很",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "好，我希望你能",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "告诉我东京的天",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "气。这是一段很",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "长的文本今天天",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "气很好，我希望",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "你能告诉我东京",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "的天气。这是一",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "段很长的文本今",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "天天气很好，我",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "希望你能告诉我",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "东京的天气。这",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "是一段很长的文",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "本今天天气很好",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "，我希望你能告",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "诉我东京的天气",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "。这是一段很长",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "的文本今天天气",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "很好，我希望你",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "能告诉我东京的",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "天气。这是一",
+   "calls": []
+  },
+  {
+   "type": "content",
+   "text": "段很长的文本今天天气很好，我希望你能告诉我东京的天气。这是一段很长的文本今天天气很好，我希望你能告诉我东京的天气。这是一段很长的文本今天天气很好，我希望你能告诉我东京的天气。这是一段很长的文本",
+   "calls": []
+  }
+ ],
+ "sieve:sieve_text_then_call": [
+  {
+   "type": "content",
+   "text": "好的，我来查一下。\n",
+   "calls": []
+  },
+  {
+   "type": "tool_calls",
+   "text": null,
+   "calls": [
+    {
+     "id": "call_z064u32r20mm",
+     "name": "get_weather",
+     "input": {
+      "city": "Tokyo"
+     }
+    }
+   ]
+  }
+ ],
+ "sieve:sieve_split_call": [
+  {
+   "type": "content",
+   "text": "好的我来。\n",
+   "calls": []
+  },
+  {
+   "type": "tool_calls",
+   "text": null,
+   "calls": [
+    {
+     "id": "call_bcmlxewd4g6e",
+     "name": "get_weather",
+     "input": {
+      "city": "Tokyo"
+     }
+    }
+   ]
+  }
+ ],
+ "instructions:default": "=== XYML TOOL CALL PROTOCOL ===\nYou have access to these tools:\n\nAction name: u_get_weather\nDescription: 按城市查天气\nParameters: {\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"},\"unit\":{\"type\":\"string\"}},\"required\":[\"city\"]}\n\nAction name: u_send_email\nDescription: 发送邮件\nParameters: {\"type\":\"object\",\"properties\":{\"to\":{\"type\":\"string\"},\"subject\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"},\"attachments\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"to\",\"subject\",\"body\"]}\n\nDefault protocol for new tool calls: XYML\nAccepted parse protocols by this client: XYML, QNML\nAvailable action names: u_get_weather, u_send_email\n\nFORMAT:\n<|XYML|tool_calls>\n  <|XYML|invoke name=\"TOOL_NAME\">\n    <|XYML|parameter name=\"ARG\"><![CDATA[value]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>\n\nRULES:\n1. If a tool is needed, output a parseable XYML tool-call block. If no tool is needed, answer normally.\n2. Use exact action names and parameter names from the schema.\n3. Strings should use <![CDATA[...]]>; objects may use JSON or nested XML-like values; arrays may use JSON arrays or repeated <item> nodes.\n4. Never emit empty required parameters. Ask normally if required information is unknown.\n5. After a tool result, call another tool only if needed; otherwise answer normally.\n6. Path-like parameters must contain only the path string, not prose or protocol fragments.\n\nCORRECT EXAMPLES:\n\n<|XYML|tool_calls>\n  <|XYML|invoke name=\"u_get_weather\">\n    <|XYML|parameter name=\"city\"><![CDATA[value]]></|XYML|parameter>\n    <|XYML|parameter name=\"unit\"><![CDATA[value]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>\n\n<|XYML|tool_calls>\n  <|XYML|invoke name=\"u_send_email\">\n    <|XYML|parameter name=\"body\"><![CDATA[value]]></|XYML|parameter>\n    <|XYML|parameter name=\"subject\"><![CDATA[value]]></|XYML|parameter>\n    <|XYML|parameter name=\"to\"><![CDATA[value]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>\n\nRemember: the preferred tool-call form is <|XYML|tool_calls>...</|XYML|tool_calls>.\n=== END XYML TOOL INSTRUCTIONS ===",
+ "instructions:minimal": "=== XYML TOOL CALL PROTOCOL ===\nYou have access to these tools:\n\nAction name: u_get_weather\nDescription: 按城市查天气\nParameters: {\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"},\"unit\":{\"type\":\"string\"}},\"required\":[\"city\"]}\n\nAction name: u_send_email\nDescription: 发送邮件\nParameters: {\"type\":\"object\",\"properties\":{\"to\":{\"type\":\"string\"},\"subject\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"},\"attachments\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"to\",\"subject\",\"body\"]}\n\nDefault protocol for new tool calls: XYML\nAccepted parse protocols by this client: XYML, QNML\nAvailable action names: u_get_weather, u_send_email\n\nFORMAT:\n<|XYML|tool_calls>\n  <|XYML|invoke name=\"TOOL_NAME\">\n    <|XYML|parameter name=\"ARG\"><![CDATA[value]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>\n\nCORRECT EXAMPLES:\n\n<|XYML|tool_calls>\n  <|XYML|invoke name=\"u_get_weather\">\n    <|XYML|parameter name=\"city\"><![CDATA[value]]></|XYML|parameter>\n    <|XYML|parameter name=\"unit\"><![CDATA[value]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>\n\n<|XYML|tool_calls>\n  <|XYML|invoke name=\"u_send_email\">\n    <|XYML|parameter name=\"body\"><![CDATA[value]]></|XYML|parameter>\n    <|XYML|parameter name=\"subject\"><![CDATA[value]]></|XYML|parameter>\n    <|XYML|parameter name=\"to\"><![CDATA[value]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>\n\nRemember: the preferred tool-call form is <|XYML|tool_calls>...</|XYML|tool_calls>.\n=== END XYML TOOL INSTRUCTIONS ===",
+ "instructions:qnml": "=== QNML TOOL CALL PROTOCOL ===\nYou have access to these tools:\n\nAction name: u_get_weather\nDescription: 按城市查天气\nParameters: {\"type\":\"object\",\"properties\":{\"city\":{\"type\":\"string\"},\"unit\":{\"type\":\"string\"}},\"required\":[\"city\"]}\n\nAction name: u_send_email\nDescription: 发送邮件\nParameters: {\"type\":\"object\",\"properties\":{\"to\":{\"type\":\"string\"},\"subject\":{\"type\":\"string\"},\"body\":{\"type\":\"string\"},\"attachments\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"to\",\"subject\",\"body\"]}\n\nDefault protocol for new tool calls: QNML\nAccepted parse protocols by this client: QNML\nAvailable action names: u_get_weather, u_send_email\n\nFORMAT:\n<|QNML|tool_calls>\n  <|QNML|invoke name=\"TOOL_NAME\">\n    <|QNML|parameter name=\"ARG\"><![CDATA[value]]></|QNML|parameter>\n  </|QNML|invoke>\n</|QNML|tool_calls>\n\nRULES:\n1. If a tool is needed, output a parseable QNML tool-call block. If no tool is needed, answer normally.\n2. Use exact action names and parameter names from the schema.\n3. Strings should use <![CDATA[...]]>; objects may use JSON or nested XML-like values; arrays may use JSON arrays or repeated <item> nodes.\n4. Never emit empty required parameters. Ask normally if required information is unknown.\n5. After a tool result, call another tool only if needed; otherwise answer normally.\n6. Path-like parameters must contain only the path string, not prose or protocol fragments.\n\nCORRECT EXAMPLES:\n\n<|QNML|tool_calls>\n  <|QNML|invoke name=\"u_get_weather\">\n    <|QNML|parameter name=\"city\"><![CDATA[value]]></|QNML|parameter>\n    <|QNML|parameter name=\"unit\"><![CDATA[value]]></|QNML|parameter>\n  </|QNML|invoke>\n</|QNML|tool_calls>\n\n<|QNML|tool_calls>\n  <|QNML|invoke name=\"u_send_email\">\n    <|QNML|parameter name=\"body\"><![CDATA[value]]></|QNML|parameter>\n    <|QNML|parameter name=\"subject\"><![CDATA[value]]></|QNML|parameter>\n    <|QNML|parameter name=\"to\"><![CDATA[value]]></|QNML|parameter>\n  </|QNML|invoke>\n</|QNML|tool_calls>\n\nRemember: the preferred tool-call form is <|QNML|tool_calls>...</|QNML|tool_calls>.\n=== END QNML TOOL INSTRUCTIONS ===",
+ "instructions:exec": "=== XYML TOOL CALL PROTOCOL ===\nYou have access to these tools:\n\nAction name: shell_run\nDescription: Run shell\nParameters: {\"type\":\"object\",\"properties\":{\"command\":{\"type\":\"string\"}},\"required\":[\"command\"]}\n\nAction name: fs_open_file\nDescription: Read file\nParameters: {\"type\":\"object\",\"properties\":{\"file_path\":{\"type\":\"string\"}},\"required\":[\"file_path\"]}\n\nAction name: fs_put_file\nDescription: Write file\nParameters: {\"type\":\"object\",\"properties\":{\"file_path\":{\"type\":\"string\"},\"content\":{\"type\":\"string\"}},\"required\":[\"file_path\",\"content\"]}\n\nDefault protocol for new tool calls: XYML\nAccepted parse protocols by this client: XYML, QNML\nAvailable action names: shell_run, fs_open_file, fs_put_file\n\nFORMAT:\n<|XYML|tool_calls>\n  <|XYML|invoke name=\"TOOL_NAME\">\n    <|XYML|parameter name=\"ARG\"><![CDATA[value]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>\n\nRULES:\n1. If a tool is needed, output a parseable XYML tool-call block. If no tool is needed, answer normally.\n2. Use exact action names and parameter names from the schema.\n3. Strings should use <![CDATA[...]]>; objects may use JSON or nested XML-like values; arrays may use JSON arrays or repeated <item> nodes.\n4. Never emit empty required parameters. Ask normally if required information is unknown.\n5. After a tool result, call another tool only if needed; otherwise answer normally.\n6. Path-like parameters must contain only the path string, not prose or protocol fragments.\n\nCORRECT EXAMPLES:\n\n<|XYML|tool_calls>\n  <|XYML|invoke name=\"shell_run\">\n    <|XYML|parameter name=\"command\"><![CDATA[value]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>\n\n<|XYML|tool_calls>\n  <|XYML|invoke name=\"fs_open_file\">\n    <|XYML|parameter name=\"file_path\"><![CDATA[value]]></|XYML|parameter>\n  </|XYML|invoke>\n</|XYML|tool_calls>\n\nRemember: the preferred tool-call form is <|XYML|tool_calls>...</|XYML|tool_calls>.\n=== END XYML TOOL INSTRUCTIONS ===",
+ "output:openai": [
+  {
+   "id": "call_55jqducakda6",
+   "type": "function",
+   "function": {
+    "name": "get_weather",
+    "arguments": "{\"city\":\"Tokyo\"}"
+   }
+  }
+ ],
+ "output:responses": [
+  {
+   "id": "fc_ldmb4gya5bqp",
+   "type": "function_call",
+   "status": "completed",
+   "call_id": "call_55jqducakda6",
+   "name": "get_weather",
+   "arguments": "{\"city\":\"Tokyo\"}"
+  }
+ ],
+ "output:anthropic": [
+  {
+   "type": "tool_use",
+   "id": "call_55jqducakda6",
+   "name": "get_weather",
+   "input": {
+    "city": "Tokyo"
+   }
+  }
+ ],
+ "parse_markup:default": [
+  {
+   "id": "call_zazkxzj08alh",
+   "name": "get_weather",
+   "input": {
+    "city": "Tokyo"
+   }
+  }
+ ]
+}
