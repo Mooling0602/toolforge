@@ -85,10 +85,13 @@ async def stream_prompt_fc(
 ) -> AsyncIterator[str]:
     sieve = create_sieve(tools, protocol=protocol)
     chunk_id = completion_id()
-    yield format_sse(_chunk(model=model, delta={"role": "assistant"}, chunk_id=chunk_id))
+    # NOTE: 不再单独发送空的 role:assistant 首帧。该空帧会让测量端把
+    # "收到首个 SSE 帧"误判为"首字响应"，导致 TTFT≈0 秒的假象。
+    # role 改为合并到第一个真实数据帧（tool_calls 或 content）中下发。
 
     full_text_parts: List[str] = []
     emitted_calls = False
+    emitted_content = False
     upstream_usage: Dict[str, int] = {}
 
     async def _emit_calls(calls: List[ToolCall]) -> AsyncIterator[str]:
@@ -98,10 +101,13 @@ async def stream_prompt_fc(
         emitted_calls = True
         openai_calls = to_openai_tool_calls(calls)
         for index, tc in enumerate(openai_calls):
+            # 首个 tool_call 帧附带 role，保证协议合规且首字即真实数据
+            role_delta = {"role": "assistant"} if index == 0 else {}
             yield format_sse(
                 _chunk(
                     model=model,
                     delta={
+                        **role_delta,
                         "tool_calls": [
                             {
                                 "index": index,
@@ -157,8 +163,11 @@ async def stream_prompt_fc(
                 if sev.get("type") == "content":
                     text = str(sev.get("text") or "")
                     if text:
+                        # 首个 content 帧附带 role，消除空首帧导致的 TTFT 假象
+                        role_delta = {"role": "assistant"} if not emitted_content else {}
+                        emitted_content = True
                         yield format_sse(
-                            _chunk(model=model, delta={"content": text}, chunk_id=chunk_id)
+                            _chunk(model=model, delta={**role_delta, "content": text}, chunk_id=chunk_id)
                         )
                 elif sev.get("type") == "tool_calls":
                     calls = _raw_to_calls(sev.get("calls") or [])
@@ -175,7 +184,10 @@ async def stream_prompt_fc(
             if sev.get("type") == "content":
                 text = str(sev.get("text") or "")
                 if text:
-                    yield format_sse(_chunk(model=model, delta={"content": text}, chunk_id=chunk_id))
+                    # 首个 content 帧附带 role，消除空首帧导致的 TTFT 假象
+                    role_delta = {"role": "assistant"} if not emitted_content else {}
+                    emitted_content = True
+                    yield format_sse(_chunk(model=model, delta={**role_delta, "content": text}, chunk_id=chunk_id))
             elif sev.get("type") == "tool_calls" and not emitted_calls:
                 calls = _raw_to_calls(sev.get("calls") or [])
                 if calls:
