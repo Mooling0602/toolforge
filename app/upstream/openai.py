@@ -16,6 +16,10 @@ class OpenAICompatUpstream:
         self._client = httpx.AsyncClient(
             base_url=config.base_url.rstrip("/"),
             timeout=httpx.Timeout(timeout, connect=30.0),
+            # 绕过环境变量代理: 容器内 HTTP(S)_PROXY 指向外网代理
+            # (172.18.45.188:7891), 访问内网 docker 网关 (cnb2api-gateway)
+            # 时若走代理会 ReadTimeout。trust_env=False 让 httpx 直连。
+            trust_env=False,
         )
 
     def _headers(self, *, stream: bool = False) -> Dict[str, str]:

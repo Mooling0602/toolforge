@@ -19,6 +19,7 @@ class AnthropicUpstream:
         self._client = httpx.AsyncClient(
             base_url=base,
             timeout=httpx.Timeout(timeout, connect=30.0),
+            trust_env=False,  # 同 openai.py: 绕过容器环境变量代理直连内网
         )
 
     def _headers(self, *, stream: bool = False) -> Dict[str, str]:
