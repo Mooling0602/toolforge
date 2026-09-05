@@ -146,10 +146,21 @@ async def stream_prompt_fc(
             if not choices:
                 continue
             delta = (choices[0] or {}).get("delta") or {}
+            reasoning_piece = delta.get("reasoning_content")
+            if reasoning_piece:
+                yield format_sse(
+                    _chunk(model=model, delta={"reasoning_content": reasoning_piece}, chunk_id=chunk_id)
+                )
             piece = delta.get("content")
             if not piece:
                 message = (choices[0] or {}).get("message") or {}
                 piece = message.get("content")
+                if not piece and not reasoning_piece:
+                    msg_reasoning = message.get("reasoning_content")
+                    if msg_reasoning:
+                        yield format_sse(
+                            _chunk(model=model, delta={"reasoning_content": msg_reasoning}, chunk_id=chunk_id)
+                        )
             if not piece:
                 continue
             full_text_parts.append(str(piece))

@@ -110,10 +110,11 @@ def inject_prompt_messages(
     instructions = build_instructions(tools, protocol=protocol)
     history = render_history_messages(messages, protocol=protocol)
 
-    # Merge instructions into first system message or prepend.
+    # Prepend XYML instructions before original system prompt so model
+    # uses our format instead of the client's native format (e.g. DSML).
     if history and history[0].get("role") == "system":
         history[0]["content"] = (
-            str(history[0].get("content") or "").rstrip() + "\n\n" + instructions
+            instructions + "\n\n" + str(history[0].get("content") or "").rstrip()
         ).strip()
         return history
 

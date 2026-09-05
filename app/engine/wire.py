@@ -174,7 +174,7 @@ def openai_result_to_canonical(
     protocol: str,
     strip_think: bool,
 ) -> CanonicalResponse:
-    content, native_calls, finish, usage = extract_text_and_native_calls(result)
+    content, reasoning_content, native_calls, finish, usage = extract_text_and_native_calls(result)
     if req.fc_mode == "prompt":
         calls = parse_text_to_calls(content, req.tools, protocol=protocol, strip_think=strip_think)
         if not calls and native_calls:
@@ -182,6 +182,7 @@ def openai_result_to_canonical(
         return CanonicalResponse(
             model=req.model,
             content="" if calls else content,
+            reasoning_content=reasoning_content,
             tool_calls=calls,
             finish_reason="tool_calls" if calls else finish,
             usage=usage or {},
@@ -190,6 +191,7 @@ def openai_result_to_canonical(
     return CanonicalResponse(
         model=req.model,
         content=content,
+        reasoning_content=reasoning_content,
         tool_calls=native_calls,
         finish_reason=finish,
         usage=usage or {},
@@ -316,6 +318,7 @@ def encode_client_response(req: CanonicalRequest, resp: CanonicalResponse) -> Di
     return build_chat_completion_response(
         model=resp.model,
         content=resp.content,
+        reasoning_content=resp.reasoning_content,
         tool_calls=resp.tool_calls or None,
         finish_reason=resp.finish_reason,
         usage=resp.usage,

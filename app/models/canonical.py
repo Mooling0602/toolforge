@@ -58,6 +58,7 @@ class CanonicalRequest:
 class CanonicalResponse:
     model: str
     content: str = ""
+    reasoning_content: str = ""
     tool_calls: List[ToolCall] = field(default_factory=list)
     finish_reason: str = "stop"
     usage: Dict[str, int] = field(default_factory=dict)

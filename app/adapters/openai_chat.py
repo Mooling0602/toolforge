@@ -34,6 +34,7 @@ PASSTHROUGH_BODY_KEYS = {
     "response_format",
     "logprobs",
     "top_logprobs",
+    "reasoning_effort",
 }
 
 
@@ -83,11 +84,14 @@ def build_chat_completion_response(
     *,
     model: str,
     content: str = "",
+    reasoning_content: str = "",
     tool_calls: Optional[List[ToolCall]] = None,
     finish_reason: str = "stop",
     usage: Optional[Dict[str, int]] = None,
 ) -> Dict[str, Any]:
     message: Dict[str, Any] = {"role": "assistant", "content": content or None}
+    if reasoning_content:
+        message["reasoning_content"] = reasoning_content
     if tool_calls:
         message["tool_calls"] = to_openai_tool_calls(tool_calls)
         finish_reason = "tool_calls"
@@ -117,15 +121,18 @@ def build_chat_completion_response(
 
 def extract_text_and_native_calls(
     upstream_json: Dict[str, Any],
-) -> tuple[str, List[ToolCall], str, Dict[str, int]]:
+) -> tuple[str, str, List[ToolCall], str, Dict[str, int]]:
     choices = upstream_json.get("choices") or []
     if not choices:
-        return "", [], "stop", upstream_json.get("usage") or {}
+        return "", "", [], "stop", upstream_json.get("usage") or {}
     choice = choices[0] or {}
     message = choice.get("message") or {}
     content = message.get("content") or ""
     if not isinstance(content, str):
         content = json.dumps(content, ensure_ascii=False)
+    reasoning_content = message.get("reasoning_content") or ""
+    if not isinstance(reasoning_content, str):
+        reasoning_content = json.dumps(reasoning_content, ensure_ascii=False)
     finish = str(choice.get("finish_reason") or "stop")
     calls: List[ToolCall] = []
     for tc in message.get("tool_calls") or []:
@@ -152,7 +159,7 @@ def extract_text_and_native_calls(
             )
         )
     usage = upstream_json.get("usage") if isinstance(upstream_json.get("usage"), dict) else {}
-    return content, calls, finish, usage  # type: ignore[return-value]
+    return content, reasoning_content, calls, finish, usage  # type: ignore[return-value]
 
 
 async def handle_chat_completions(
